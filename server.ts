@@ -16,7 +16,6 @@ interface Game {
 let games = {}
 
 io.on('connection', (socket) => {
-
   socket.on('createGame', ({ playerOne }) => {
     let gameId: string = ''
     for (let i = 0; i < 5; i++) gameId += (Math.floor(Math.random() * 10)).toString()
