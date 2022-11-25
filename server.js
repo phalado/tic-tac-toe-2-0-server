@@ -1,5 +1,5 @@
 var createServer = require('http').createServer;
-var Server = require('socket.io').Server;
+var _a = require('socket.io'), Server = _a.Server, Socket = _a.Socket;
 var httpServer = createServer();
 var io = new Server(httpServer, { cors: { origin: '*' } });
 var games = {};
@@ -15,7 +15,6 @@ io.on('connection', function (socket) {
             currentPlayer: Math.random() < 0.5,
             round: 0
         };
-        console.log('1', gameId, games[gameId]);
         io.emit('gameCreated', { gameId: gameId, playerId: gameId + 'A' });
     });
     socket.on('joinGame', function (_a) {
@@ -23,7 +22,6 @@ io.on('connection', function (socket) {
         var game = games[gameId];
         game.playerTwo = playerTwo;
         game.round = 1;
-        console.log('2', gameId, games[gameId]);
         io.emit('gameStart', {
             gameId: gameId,
             playerOne: game.playerOne,
@@ -33,11 +31,9 @@ io.on('connection', function (socket) {
         });
     });
     socket.on('move', function (data) {
-        console.log('3', data);
         var game = games[data.gameId];
         game.round = data.round;
         game.currentPlayer = !game.currentPlayer;
-        console.log('4', game);
         io.emit('newMove', {
             gameId: data.gameId,
             playerTurn: game.currentPlayer,

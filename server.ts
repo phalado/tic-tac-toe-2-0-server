@@ -1,5 +1,5 @@
 const { createServer } = require('http')
-const { Server } = require('socket.io')
+const { Server, Socket } = require('socket.io')
 
 const httpServer = createServer()
 const io = new Server(httpServer, { cors: { origin: '*' } })
@@ -13,10 +13,10 @@ interface Game {
   }
 }
 
-let games = {}
+let games: any = {}
 
-io.on('connection', (socket) => {
-  socket.on('createGame', ({ playerOne }) => {
+io.on('connection', (socket: any) => {
+  socket.on('createGame', ({ playerOne }: { playerOne: string }) => {
     let gameId: string = ''
     for (let i = 0; i < 5; i++) gameId += (Math.floor(Math.random() * 10)).toString()
     games[gameId] = {
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     io.emit('gameCreated', { gameId, playerId: gameId + 'A' })
   })
 
-  socket.on('joinGame', ({ gameId, playerTwo }) => {
+  socket.on('joinGame', ({ gameId, playerTwo }: { gameId: string, playerTwo: string }) => {
     const game = games[gameId]
     game.playerTwo = playerTwo
     game.round = 1
@@ -43,7 +43,15 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('move', data => {
+  socket.on('move', (
+    data: {
+      gameId: string,
+      round: number,
+      player: boolean,
+      pieceIndex: number,
+      pieceValue: number,
+      cell: number
+    }) => {
     const game = games[data.gameId]
     game.round = data.round
     game.currentPlayer = !game.currentPlayer
