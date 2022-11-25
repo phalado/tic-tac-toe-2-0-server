@@ -8,7 +8,7 @@ interface Game {
   (gameId: string): {
     playerOne: string
     playerTwo: string
-    currentPlaer: boolean
+    currentPlayer: boolean
     round: number
   }
 }
@@ -26,7 +26,6 @@ io.on('connection', (socket) => {
       currentPlayer: Math.random() < 0.5,
       round: 0
     }
-    console.log('1', gameId, games[gameId])
 
     io.emit('gameCreated', { gameId, playerId: gameId + 'A' })
   })
@@ -40,17 +39,27 @@ io.on('connection', (socket) => {
       gameId,
       playerOne: game.playerOne,
       playerTwo: game.playerTwo,
-      playerTurn: game.currentPlaer,
+      playerTurn: game.currentPlayer,
       round: game.round
     })
   })
 
   socket.on('move', data => {
-    io.emit('newMove', data)
-    console.log(data)
+    const game = games[data.gameId]
+    game.round = data.round
+    game.currentPlayer = !game.currentPlayer
+
+    io.emit('newMove', {
+      gameId: data.gameId,
+      playerTurn: game.currentPlayer,
+      round: game.round,
+      player: data.player,
+      pieceIndex: data.pieceIndex,
+      pieceValue: data.pieceValue,
+      cell: data.cell
+    })
   })
 })
-
 
 const port = 1337
 httpServer.listen(port)

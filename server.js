@@ -4,7 +4,8 @@ var httpServer = createServer();
 var io = new Server(httpServer, { cors: { origin: '*' } });
 var games = {};
 io.on('connection', function (socket) {
-    socket.on('createGame', function (playerOne) {
+    socket.on('createGame', function (_a) {
+        var playerOne = _a.playerOne;
         var gameId = '';
         for (var i = 0; i < 5; i++)
             gameId += (Math.floor(Math.random() * 10)).toString();
@@ -19,22 +20,33 @@ io.on('connection', function (socket) {
     });
     socket.on('joinGame', function (_a) {
         var gameId = _a.gameId, playerTwo = _a.playerTwo;
-        console.log('2', games, gameId, playerTwo);
         var game = games[gameId];
-        console.log(game);
         game.playerTwo = playerTwo;
         game.round = 1;
+        console.log('2', gameId, games[gameId]);
         io.emit('gameStart', {
             gameId: gameId,
             playerOne: game.playerOne,
             playerTwo: game.playerTwo,
-            playerTurn: game.currentPlaer,
+            playerTurn: game.currentPlayer,
             round: game.round
         });
     });
     socket.on('move', function (data) {
-        io.emit('newMove', data);
-        console.log(data);
+        console.log('3', data);
+        var game = games[data.gameId];
+        game.round = data.round;
+        game.currentPlayer = !game.currentPlayer;
+        console.log('4', game);
+        io.emit('newMove', {
+            gameId: data.gameId,
+            playerTurn: game.currentPlayer,
+            round: game.round,
+            player: data.player,
+            pieceIndex: data.pieceIndex,
+            pieceValue: data.pieceValue,
+            cell: data.cell
+        });
     });
 });
 var port = 1337;
