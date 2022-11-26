@@ -2,7 +2,7 @@ const { createServer } = require('http')
 const { Server, Socket } = require('socket.io')
 
 const httpServer = createServer()
-const io = new Server(httpServer, { cors: { origin: '*', methods: ["GET", "POST"], allowHeaders: '*' } })
+const io = new Server(httpServer, { cors: { origin: 'https://tic-tac-toe-2-0.netlify.app/', methods: ["GET", "POST"], allowHeaders: '*' } })
 
 interface Game {
   (gameId: string): {
