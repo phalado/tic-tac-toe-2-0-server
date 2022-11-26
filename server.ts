@@ -2,7 +2,7 @@ const { createServer } = require('http')
 const { Server, Socket } = require('socket.io')
 
 const httpServer = createServer()
-const io = new Server(httpServer, { cors: { origin: '*' } })
+const io = new Server(httpServer, { cors: { origin: '*', allowHeaders: '*' } })
 
 interface Game {
   (gameId: string): {
