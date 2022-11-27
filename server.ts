@@ -1,10 +1,20 @@
-const { createServer } = require('http')
-const { Server, Socket } = require('socket.io')
+// const { createServer } = require('http')
+// const { Server, Socket } = require('socket.io')
 
-const httpServer = createServer()
-const io = new Server(httpServer, { cors: {
-  origin: true,
-} })
+// const httpServer = createServer()
+// const io = new Server(httpServer, { cors: {
+//   origin: 'https://tic-tac-toe-2-0.netlify.app/',
+//   methods: ["GET", "POST"],
+//   allowHeaders: 'Content-Type'
+// } })
+
+const express = require('express');
+
+const app = express();
+const server = require('http').Server(app);
+
+const io = require('socket.io').listen(server);
+
 
 interface Game {
   (gameId: string): {
@@ -73,5 +83,5 @@ io.on('connection', (socket: any) => {
 })
 
 const port = 1337
-httpServer.listen(port)
+server.listen(port)
 console.log('Listening on port ' + port + '...')
