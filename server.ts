@@ -1,5 +1,5 @@
 const { createServer } = require('http')
-const { Server, Socket } = require('socket.io')
+const { Server } = require('socket.io')
 
 const httpServer = createServer()
 const io = new Server(httpServer, { cors: { origin: true } })
@@ -10,6 +10,7 @@ io.on('connection', (socket: any) => {
   socket.on('testConnection', () => io.emit('connectionTested', "Server on"))
 
   socket.on('createGame', ({ playerOne }: { playerOne: string }) => {
+    console.log("Game created by " + playerOne)
     let gameId: string = ''
     for (let i = 0; i < 5; i++) gameId += (Math.floor(Math.random() * 10)).toString()
     games[gameId] = {

@@ -1,5 +1,5 @@
 var createServer = require('http').createServer;
-var _a = require('socket.io'), Server = _a.Server, Socket = _a.Socket;
+var Server = require('socket.io').Server;
 var httpServer = createServer();
 var io = new Server(httpServer, { cors: { origin: true } });
 var games = {};
@@ -7,6 +7,7 @@ io.on('connection', function (socket) {
     socket.on('testConnection', function () { return io.emit('connectionTested', "Server on"); });
     socket.on('createGame', function (_a) {
         var playerOne = _a.playerOne;
+        console.log("Game created by " + playerOne);
         var gameId = '';
         for (var i = 0; i < 5; i++)
             gameId += (Math.floor(Math.random() * 10)).toString();
