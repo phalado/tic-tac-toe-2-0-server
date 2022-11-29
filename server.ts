@@ -63,5 +63,4 @@ io.on('connection', (socket: any) => {
 })
 
 const port = 1337
-httpServer.listen(port)
-console.log('Listening on port ' + port + '...')
+httpServer.listen(port, () => console.log('Listening on port ' + port + '...'))
