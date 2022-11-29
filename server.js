@@ -1,7 +1,7 @@
 var createServer = require('http').createServer;
 var Server = require('socket.io').Server;
 var httpServer = createServer();
-var io = new Server(httpServer, { cors: { origin: true } });
+var io = new Server(httpServer, { cors: { origin: '*', 'Access-Control-Allow-Origin': '*' } });
 var games = {};
 io.on('connection', function (socket) {
     socket.on('testConnection', function () { return io.emit('connectionTested', "Server on"); });
