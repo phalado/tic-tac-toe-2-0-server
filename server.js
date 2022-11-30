@@ -13,8 +13,7 @@ var createServer = require('http').createServer;
 var Server = require('socket.io').Server;
 var httpServer = createServer();
 var io = new Server(httpServer, { cors: {
-        // origin: 'https://tic-tac-toe-2-0.herokuapp.com',
-        origin: true,
+        origin: 'https://tic-tac-toe-2-0.herokuapp.com',
         credentials: true
     } });
 var games = {};
