@@ -2,11 +2,15 @@ const { createServer } = require('http')
 const { Server } = require('socket.io')
 
 const httpServer = createServer()
-const io = new Server(httpServer, { cors: { origin: '*', 'Access-Control-Allow-Origin': true } })
+const io = new Server(httpServer, { cors: {
+  origin: 'https://tic-tac-toe-2-0.herokuapp.com',
+  credentials: true
+} })
 
 let games: any = {}
 
 io.on('connection', (socket: any) => {
+  console.log(socket.handshake)
   socket.on('testConnection', () => io.emit('connectionTested', "Server on"))
 
   socket.on('createGame', ({ playerOne }: { playerOne: string }) => {
