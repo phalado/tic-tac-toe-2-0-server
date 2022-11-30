@@ -32,13 +32,24 @@ interface MoveInterface {
 
 let games: GameInterface = {}
 
+const getGameId = () => {
+  let gameId: string = ''
+
+  while (gameId === '') {
+    for (let i = 0; i < 5; i++) gameId += (Math.floor(Math.random() * 10)).toString()
+    if (gameId in games) gameId = ''
+  }
+
+  return gameId
+}
+
 io.on('connection', (socket: any) => {
   socket.on('testConnection', () => io.emit('connectionTested', "Server on"))
 
   socket.on('createGame', ({ playerOne }: { playerOne: PlayerInterface }) => {
     console.log("Game created by " + playerOne.name)
-    let gameId: string = ''
-    for (let i = 0; i < 5; i++) gameId += (Math.floor(Math.random() * 10)).toString()
+
+    const gameId = getGameId();
     games[gameId] = {
       playerOne,
       playerTwo: { name: '', id: '' },
@@ -51,6 +62,13 @@ io.on('connection', (socket: any) => {
 
   socket.on('joinGame', ({ gameId, playerTwo }: { gameId: string, playerTwo: PlayerInterface }) => {
     const game = games[gameId]
+    
+    if (game.playerTwo.id !== '') {
+      io.to(playerTwo.id).emit('error', 'Can\'t join. Game with two players.')
+
+      return
+    }
+    
     game.playerTwo = playerTwo
     game.round = 1
 
