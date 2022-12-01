@@ -62,9 +62,20 @@ io.on('connection', (socket: any) => {
 
   socket.on('joinGame', ({ gameId, playerTwo }: { gameId: string, playerTwo: PlayerInterface }) => {
     const game = games[gameId]
+    if (!gameId || !game) {
+      io.to(playerTwo.id).emit('error', {
+        status: 'join',
+        message: 'Please, fill a correct gameId.'
+      })
+
+      return
+    }
     
     if (game.playerTwo.id !== '') {
-      io.to(playerTwo.id).emit('error', 'Can\'t join. Game with two players.')
+      io.to(playerTwo.id).emit('error', {
+        status: 'join',
+        message: 'Can\'t join. Game with two players.'
+      })
 
       return
     }

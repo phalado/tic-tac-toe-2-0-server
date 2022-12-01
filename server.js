@@ -17,14 +17,22 @@ var io = new Server(httpServer, { cors: {
         credentials: true
     } });
 var games = {};
+var getGameId = function () {
+    var gameId = '';
+    while (gameId === '') {
+        for (var i = 0; i < 5; i++)
+            gameId += (Math.floor(Math.random() * 10)).toString();
+        if (gameId in games)
+            gameId = '';
+    }
+    return gameId;
+};
 io.on('connection', function (socket) {
     socket.on('testConnection', function () { return io.emit('connectionTested', "Server on"); });
     socket.on('createGame', function (_a) {
         var playerOne = _a.playerOne;
         console.log("Game created by " + playerOne.name);
-        var gameId = '';
-        for (var i = 0; i < 5; i++)
-            gameId += (Math.floor(Math.random() * 10)).toString();
+        var gameId = getGameId();
         games[gameId] = {
             playerOne: playerOne,
             playerTwo: { name: '', id: '' },
@@ -36,6 +44,20 @@ io.on('connection', function (socket) {
     socket.on('joinGame', function (_a) {
         var gameId = _a.gameId, playerTwo = _a.playerTwo;
         var game = games[gameId];
+        if (!gameId || !game) {
+            io.to(playerTwo.id).emit('error', {
+                status: 'join',
+                message: 'Please, fill a correct gameId.'
+            });
+            return;
+        }
+        if (game.playerTwo.id !== '') {
+            io.to(playerTwo.id).emit('error', {
+                status: 'join',
+                message: 'Can\'t join. Game with two players.'
+            });
+            return;
+        }
         game.playerTwo = playerTwo;
         game.round = 1;
         var data = {
