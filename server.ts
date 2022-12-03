@@ -3,7 +3,7 @@ const { Server } = require('socket.io')
 
 const httpServer = createServer()
 const io = new Server(httpServer, { cors: {
-  origin: 'https://tic-tac-toe-2-0.herokuapp.com',
+  origin: 'https://tic-tac-toe-2-0.netlify.app',
   credentials: true
 } })
 
