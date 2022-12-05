@@ -49,8 +49,6 @@ io.on('connection', (socket: any) => {
   socket.on('testConnection', () => io.emit('connectionTested', "Server on"))
 
   socket.on('createGame', ({ playerOne }: { playerOne: PlayerInterface }) => {
-    console.log("Game created by " + playerOne.name)
-
     const gameId = getGameId();
     games[gameId] = {
       playerOne,
@@ -60,6 +58,8 @@ io.on('connection', (socket: any) => {
       playerOnePlayAgain: false,
       playerTwoPlayAgain: false
     }
+
+    console.log("Game " + gameId + " created by " + playerOne.name)
 
     io.to(playerOne.id).emit('gameCreated', { gameId })
   })

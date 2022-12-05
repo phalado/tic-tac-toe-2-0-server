@@ -31,7 +31,6 @@ io.on('connection', function (socket) {
     socket.on('testConnection', function () { return io.emit('connectionTested', "Server on"); });
     socket.on('createGame', function (_a) {
         var playerOne = _a.playerOne;
-        console.log("Game created by " + playerOne.name);
         var gameId = getGameId();
         games[gameId] = {
             playerOne: playerOne,
@@ -41,6 +40,7 @@ io.on('connection', function (socket) {
             playerOnePlayAgain: false,
             playerTwoPlayAgain: false
         };
+        console.log("Game " + gameId + " created by " + playerOne.name);
         io.to(playerOne.id).emit('gameCreated', { gameId: gameId });
     });
     socket.on('joinGame', function (_a) {
