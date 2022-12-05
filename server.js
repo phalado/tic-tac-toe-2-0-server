@@ -13,7 +13,8 @@ var createServer = require('http').createServer;
 var Server = require('socket.io').Server;
 var httpServer = createServer();
 var io = new Server(httpServer, { cors: {
-        origin: 'https://tic-tac-toe-2-0.netlify.app',
+        origin: true,
+        // origin: 'https://tic-tac-toe-2-0.netlify.app',
         credentials: true
     } });
 var games = {};
@@ -37,7 +38,9 @@ io.on('connection', function (socket) {
             playerOne: playerOne,
             playerTwo: { name: '', id: '' },
             currentPlayer: Math.random() < 0.5,
-            round: 0
+            round: 0,
+            playerOnePlayAgain: false,
+            playerTwoPlayAgain: false
         };
         io.to(playerOne.id).emit('gameCreated', { gameId: gameId });
     });
@@ -84,6 +87,24 @@ io.on('connection', function (socket) {
             pieceValue: data.pieceValue,
             cell: data.cell
         });
+    });
+    socket.on('playAgain', function (data) {
+        var game = games[data.gameId];
+        data.player ? game.playerOnePlayAgain = true : game.playerTwoPlayAgain = true;
+        game.round = 1;
+        if (game.playerOnePlayAgain && game.playerTwoPlayAgain) {
+            var newData = {
+                gameId: data.gameId,
+                playerOne: game.playerOne,
+                playerTwo: game.playerTwo,
+                playerTurn: game.currentPlayer,
+                round: game.round
+            };
+            io.to(game.playerOne.id).emit('newGameStart', __assign({}, newData));
+            io.to(game.playerTwo.id).emit('newGameStart', __assign({}, newData));
+            game.playerOnePlayAgain = false;
+            game.playerTwoPlayAgain = false;
+        }
     });
 });
 var port = process.env.PORT || 1337;

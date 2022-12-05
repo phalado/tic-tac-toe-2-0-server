@@ -14,10 +14,12 @@ interface PlayerInterface {
 
 interface GameInterface {
   [gameId: string]: {
-    playerOne: PlayerInterface,
-    playerTwo: PlayerInterface,
-    currentPlayer: boolean,
+    playerOne: PlayerInterface
+    playerTwo: PlayerInterface
+    currentPlayer: boolean
     round: number
+    playerOnePlayAgain: boolean
+    playerTwoPlayAgain: boolean
   }
 }
 
@@ -54,7 +56,9 @@ io.on('connection', (socket: any) => {
       playerOne,
       playerTwo: { name: '', id: '' },
       currentPlayer: Math.random() < 0.5,
-      round: 0
+      round: 0,
+      playerOnePlayAgain: false,
+      playerTwoPlayAgain: false
     }
 
     io.to(playerOne.id).emit('gameCreated', { gameId })
@@ -110,6 +114,28 @@ io.on('connection', (socket: any) => {
       pieceValue: data.pieceValue,
       cell: data.cell
     })
+  })
+
+  socket.on('playAgain', (data: { gameId: string, player: boolean }) => {
+    const game = games[data.gameId]
+    data.player ? game.playerOnePlayAgain = true : game.playerTwoPlayAgain = true
+    game.round = 1
+
+    if (game.playerOnePlayAgain && game.playerTwoPlayAgain) {
+      const newData = {
+        gameId: data.gameId,
+        playerOne: game.playerOne,
+        playerTwo: game.playerTwo,
+        playerTurn: game.currentPlayer,
+        round: game.round
+      }
+
+      io.to(game.playerOne.id).emit('newGameStart', { ...newData })
+      io.to(game.playerTwo.id).emit('newGameStart', { ...newData })
+
+      game.playerOnePlayAgain = false
+      game.playerTwoPlayAgain = false
+    }
   })
 })
 
