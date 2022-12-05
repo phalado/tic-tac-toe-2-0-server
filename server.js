@@ -13,8 +13,7 @@ var createServer = require('http').createServer;
 var Server = require('socket.io').Server;
 var httpServer = createServer();
 var io = new Server(httpServer, { cors: {
-        origin: true,
-        // origin: 'https://tic-tac-toe-2-0.netlify.app',
+        origin: 'https://tic-tac-toe-2-0.netlify.app',
         credentials: true
     } });
 var games = {};
