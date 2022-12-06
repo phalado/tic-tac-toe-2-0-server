@@ -46,7 +46,9 @@ const getGameId = () => {
 }
 
 io.on('connection', (socket: any) => {
-  socket.on('testConnection', () => io.emit('connectionTested', "Server on"))
+  socket.on('testConnection', ({ id }: { id: string }) => {
+    io.to(id).emit('connectionTested', "Server on")
+  })
 
   socket.on('createGame', ({ playerOne }: { playerOne: PlayerInterface }) => {
     const gameId = getGameId();

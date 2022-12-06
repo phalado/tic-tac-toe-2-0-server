@@ -28,7 +28,10 @@ var getGameId = function () {
     return gameId;
 };
 io.on('connection', function (socket) {
-    socket.on('testConnection', function () { return io.emit('connectionTested', "Server on"); });
+    socket.on('testConnection', function (_a) {
+        var id = _a.id;
+        io.to(id).emit('connectionTested', "Server on");
+    });
     socket.on('createGame', function (_a) {
         var playerOne = _a.playerOne;
         var gameId = getGameId();
